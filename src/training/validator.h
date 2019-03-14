@@ -318,7 +318,7 @@ public:
       TaskBarrier taskBarrier;
       int count = 0;
       for(auto batch : *batchGenerator_) {
-        if (++count > 10) break;
+        if (++count > 5) continue;
         auto task = [=](size_t id) {
           thread_local Ptr<ExpressionGraph> graph;
           thread_local Ptr<Scorer> scorer;
