@@ -281,8 +281,7 @@ public:
         if(!beams[i].empty()) {
           final = final
                   || histories[i]->size()
-                         >= options_->get<float>("max-length-factor")
-                                * batch->front()->batchWidth();
+                         >= options_->get<float>("max-length-target");
           histories[i]->Add(
               beams[i], trgEosId_, prunedBeams[i].empty() || final);
         }

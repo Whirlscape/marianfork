@@ -20,9 +20,9 @@ private:
   };
 
 public:
-  History(size_t lineNo, float alpha = 1.f, float wp_ = 0.f);
+  History(size_t lineNo, float alpha = 0.6f, float wp = 0.f);
 
-  float LengthPenalty(size_t length) { return std::pow((float)length, alpha_); }
+  float LengthPenalty(size_t length) { return std::pow((5.f + (float)length) / 6.f, alpha_); }
   float WordPenalty(size_t length) { return wp_ * (float)length; }
 
   void Add(const Beam& beam, Word trgEosId, bool last = false) {

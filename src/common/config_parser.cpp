@@ -416,9 +416,9 @@ void ConfigParser::addOptionsValidation(cli::CLIWrapper& cli) {
   cli.add<float>("--normalize,-n",
       "Divide translation score by pow(translation length, arg)",
       0)->implicit_val("1");
-  cli.add<float>("--max-length-factor",
-      "Maximum target length as source length times factor",
-      3);
+  cli.add<float>("--max-length-target",
+      "Maximum target length (not a factor as in original marian)",
+      50);
   cli.add<float>("--word-penalty",
       "Subtract (arg * translation length) from translation score ");
   cli.add<bool>("--allow-unk",
@@ -469,9 +469,9 @@ void ConfigParser::addOptionsTranslation(cli::CLIWrapper& cli) {
   cli.add<float>("--normalize,-n",
       "Divide translation score by pow(translation length, arg)",
       0)->implicit_val("1");
-  cli.add<float>("--max-length-factor",
-      "Maximum target length as source length times factor",
-      3);
+  cli.add<float>("--max-length-target",
+      "Maximum target length (not a factor as in original marian)",
+      50);
   cli.add<float>("--word-penalty",
       "Subtract (arg * translation length) from translation score");
   cli.add<bool>("--allow-unk",
