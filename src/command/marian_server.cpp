@@ -26,6 +26,8 @@ int main(int argc, char **argv) {
     // Get input text
     auto inputText = message->string();
     auto sendStream = std::make_shared<WSServer::SendStream>();
+    
+    LOG(info, "Input text: {}", inputText);
 
     // Translate
     timer::Timer timer;
