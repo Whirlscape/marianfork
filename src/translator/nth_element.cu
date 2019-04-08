@@ -318,7 +318,8 @@ public:
 private:
   void getNBestList(float* probs,
                     const std::vector<int>& batchFirstElementIdxs,
-                    const std::vector<int>& cummulatedBeamSizes) {
+                    const std::vector<int>& cummulatedBeamSizes,
+                    float weight) {
     cudaSetDevice(deviceId_.no);
     CUDA_CHECK(cudaMemcpyAsync(d_batchPosition,
                                batchFirstElementIdxs.data(),
@@ -357,7 +358,8 @@ public:
                     Tensor Probs,
                     std::vector<float>& outCosts,
                     std::vector<unsigned>& outKeys,
-                    const bool isFirst) {
+                    const bool isFirst,
+                    float weight) {
     cudaSetDevice(deviceId_.no);
 
     std::vector<int> cummulatedBeamSizes(beamSizes.size() + 1, 0);
@@ -371,7 +373,7 @@ public:
           += ((isFirst) ? (i + 1) : cummulatedBeamSizes[i + 1]) * vocabSize;
     }
 
-    getNBestList(Probs->data(), batchFirstElementIdxs, cummulatedBeamSizes);
+    getNBestList(Probs->data(), batchFirstElementIdxs, cummulatedBeamSizes, weight);
     getPairs(cummulatedBeamSizes.back(), outKeys, outCosts);
   }
 
@@ -444,8 +446,9 @@ GetNBestListFn createGetNBestListGPUFn(size_t beamSize, size_t dimBatch, DeviceI
       Tensor logProbs,
       std::vector<float>& outCosts,
       std::vector<unsigned>& outKeys,
-      const bool isFirst) {
-      return nth->getNBestList(beamSizes, logProbs, outCosts, outKeys, isFirst);
+      const bool isFirst,
+      float weight) {
+      return nth->getNBestList(beamSizes, logProbs, outCosts, outKeys, isFirst, weight);
   };
 }
 
