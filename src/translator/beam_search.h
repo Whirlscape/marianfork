@@ -169,7 +169,7 @@ public:
 
     size_t localBeamSize = beamSize_; // max over beam sizes of active sentence hypotheses
 
-    auto getNBestList = createGetNBestListFn(localBeamSize, dimBatch, graph->getDeviceId(), options_->get<float>("entropy-weight"));
+    auto getNBestList = createGetNBestListFn(localBeamSize, dimBatch, graph->getDeviceId());
 
     Beams beams(dimBatch);        // [batchIndex][beamIndex] is one sentence hypothesis
     for(auto& beam : beams)
@@ -264,7 +264,7 @@ public:
       std::vector<float> outPathScores;
 
       std::vector<size_t> beamSizes(dimBatch, localBeamSize);
-      getNBestList(beamSizes, pathScores->val(), outPathScores, outKeys, first);
+      getNBestList(beamSizes, pathScores->val(), outPathScores, outKeys, first, options_->get<float>("entropy-weight"));
 
       int dimTrgVoc = pathScores->shape()[-1];
       beams = toHyps(outKeys,
