@@ -169,7 +169,7 @@ public:
 
     size_t localBeamSize = beamSize_; // max over beam sizes of active sentence hypotheses
 
-    auto getNBestList = createGetNBestListFn(localBeamSize, dimBatch, graph->getDeviceId());
+    auto getNBestList = createGetNBestListFn(localBeamSize, dimBatch, graph->getDeviceId(), options_->get<float>("entropy-weight"));
 
     Beams beams(dimBatch);        // [batchIndex][beamIndex] is one sentence hypothesis
     for(auto& beam : beams)

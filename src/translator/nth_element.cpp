@@ -29,7 +29,8 @@ public:
 private:
   void getNBestList(float* scores,
                     const std::vector<int>& batchFirstElementIdxs,
-                    const std::vector<int>& cumulativeBeamSizes) {
+                    const std::vector<int>& cumulativeBeamSizes,
+                    float weight) {
     /* For each batch, select the max N elements, where N is the beam size for
      * this batch. Locally record these elements (their current value and index
      * in 'scores') before updating each element to a large negative value, such
@@ -50,11 +51,12 @@ private:
       std::vector<int>::iterator end = idxs.begin() + batchFirstElementIdxs[batchIdx + 1];
       std::partial_sort(
           begin, middle, end, [=](int a, int b) { return scores[a] > scores[b]; });
-
+      
+      float weighted_max_score = -weight * scores[*begin];
       while(begin != middle) {
         int idx = *begin++;
         h_res_idx[pos] = idx;
-        h_res[pos] = scores[idx];
+        h_res[pos] = scores[idx] + weighted_max_score;
         scores[idx] = std::numeric_limits<float>::lowest();
         ++pos;
       }
@@ -66,7 +68,8 @@ public:
                                    Tensor scores,
                                    std::vector<float>& outPathScores,
                                    std::vector<unsigned>& outKeys,
-                                   const bool isFirst) {
+                                   const bool isFirst,
+                                   float weight) {
     std::vector<int> cumulativeBeamSizes(beamSizes.size() + 1, 0);
     std::vector<int> batchFirstElementIdxs(beamSizes.size() + 1, 0);
 
@@ -77,7 +80,7 @@ public:
           += (isFirst ? i + 1 : cumulativeBeamSizes[i + 1]) * vocabSize;
     }
 
-    getNBestList(scores->data(), batchFirstElementIdxs, cumulativeBeamSizes);
+    getNBestList(scores->data(), batchFirstElementIdxs, cumulativeBeamSizes, weight);
     getPairs(cumulativeBeamSizes.back(), outKeys, outPathScores);
   }
 
@@ -115,8 +118,9 @@ GetNBestListFn createGetNBestListFn(size_t beamSize, size_t dimBatch, DeviceId d
       Tensor logProbs,
       std::vector<float>& outCosts,
       std::vector<unsigned>& outKeys,
-      const bool isFirst) {
-      return nth->getNBestList(beamSizes, logProbs, outCosts, outKeys, isFirst);
+      const bool isFirst,
+      float weight) {
+      return nth->getNBestList(beamSizes, logProbs, outCosts, outKeys, isFirst, weight);
   };
 }
 

@@ -14,7 +14,8 @@ typedef std::function<void(const std::vector<size_t>& beamSizes,
                            Tensor logProbs,
                            std::vector<float>& outCosts,
                            std::vector<unsigned>& outKeys,
-                           const bool isFirst)> GetNBestListFn;
+                           const bool isFirst)> GetNBestListFn,
+                           float weight;
 
 GetNBestListFn createGetNBestListFn(size_t beamSize, size_t dimBatch, DeviceId deviceId);
 }  // namespace marian

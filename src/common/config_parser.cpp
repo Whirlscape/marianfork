@@ -421,6 +421,8 @@ void ConfigParser::addOptionsValidation(cli::CLIWrapper& cli) {
       50);
   cli.add<float>("--word-penalty",
       "Subtract (arg * translation length) from translation score ");
+  cli.add<float>("--entropy-weight",
+                 "Beef up low entropy result steps");
   cli.add<bool>("--allow-unk",
       "Allow unknown words to appear in output");
   cli.add<bool>("--n-best",
@@ -474,6 +476,8 @@ void ConfigParser::addOptionsTranslation(cli::CLIWrapper& cli) {
       50);
   cli.add<float>("--word-penalty",
       "Subtract (arg * translation length) from translation score");
+  cli.add<float>("--entropy-weight",
+                 "Beef up low entropy result steps");
   cli.add<bool>("--allow-unk",
       "Allow unknown words to appear in output");
   cli.add<bool>("--n-best",
